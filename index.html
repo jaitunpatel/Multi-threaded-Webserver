@@ -1,0 +1,178 @@
+<!-- <html>
+<head>
+    <script>
+        function login(event){
+            event.preventDefault();
+        
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            var json_obj = {"username":username, "password":password};
+            var json_data = JSON.stringify(json_obj);
+
+            var req = new XMLHttpRequest();
+            req.open("POST", "/api/login"); 
+            
+            req.send(json_data);     
+            
+
+            req.onreadystatechange = function() {
+                if (req.readyState == 4 && req.status == 200) {
+                    var req2 = new XMLHttpRequest();
+                    req2.open("GET", "/api/tweet");
+                    req2.send();
+                    var login_form = document.getElementById("login");
+                    login_form.style.display = "none"; // hide login form
+                    var new_tweet_div = document.createElement("div");
+                    new_tweet_div.innerHTML = "<h2>New tweet:</h2><input type='text' id='tweet' name='tweet' size='30'></input><br><button type='button' onclick='postTweet()' style='font-size: 20px;'>Send it</button><button type='button' onclick='logout()' style='font-size: 20px;'>Logout</button>";
+                    document.body.appendChild(new_tweet_div);
+                    var tweets_div = document.createElement("div");
+                    tweets_div.id = "tweets";
+                    document.body.appendChild(tweets_div);
+                }
+            }
+        }
+
+        function postTweet() {
+            event.preventDefault();
+            var tweet = document.getElementById("tweet").value;
+            var json_send = {"tweet":tweet};
+            var json_convert = JSON.stringify(json_send);
+            // Send a POST request to /api/tweet with tweet data
+            var req3 = new XMLHttpRequest();
+            req3.open("POST", "/api/tweet");
+            req3.send(json_convert);
+
+            req3.onreadystatechange = function() {
+                if (req3.readyState == 4 && req3.status == 200) {
+                    var tweet_div = document.createElement("div");
+                    tweet_div.className = "tweet";
+                    tweet_div.innerHTML = "<p>" + tweet + "</p><button type='button' onclick='deleteTweet(this.parentNode)' style='font-size: 15px; display:inline-block;'>Delete</button>";
+                    document.getElementById("tweets").appendChild(tweet_div);
+                }
+            }
+        }
+
+        function deleteTweet(tweet_div) {
+            event.preventDefault();
+            
+            var tweetId = tweet_div.id;
+            var req = new XMLHttpRequest();  
+            req4.open("DELETE", "/api/tweet/" + tweetId);
+            req.send();
+            console.log(tweetId)
+
+            req.onreadystatechange = function() {
+                if (req.readyState == 4 && req.status == 200) {
+                    tweet_div.parentNode.removeChild(tweet_div);
+                }
+            }
+        }
+
+        function logout() {
+            event.preventDefault();
+            // Send a DELETE request to /api/tweet to delete all tweets
+            // ...
+            document.getElementById("tweets").innerHTML = "";
+        }
+       
+    </script>
+
+</head> -->
+
+<html>
+<head>
+    <script>
+        var username = "";
+        var password = "";
+
+        function login(event){
+            event.preventDefault();
+
+            username = document.getElementById("username").value;
+            password = document.getElementById("password").value;
+
+            var json_obj = {"username":username, "password":password};
+            var json_data = JSON.stringify(json_obj);
+
+            var req = new XMLHttpRequest();
+            req.open("POST", "/api/login"); 
+            req.send(json_data);     
+
+            req.onreadystatechange = function() {
+                if (req.readyState == 4 && req.status == 200) {
+                    var req2 = new XMLHttpRequest();
+                    req2.open("GET", "/api/tweet");
+                    req2.send();
+                    var login_form = document.getElementById("login");
+                    login_form.style.display = "none"; // hide login form
+                    var new_tweet_div = document.createElement("div");
+                    new_tweet_div.innerHTML = "<h2>New tweet:</h2><input type='text' id='tweet' name='tweet' size='30'></input><br><button type='button' onclick='postTweet()' style='font-size: 20px;'>Send it</button><button type='button' onclick='logout()' style='font-size: 20px;'>Logout</button>";
+                    document.body.appendChild(new_tweet_div);
+                    var tweets_div = document.createElement("div");
+                    tweets_div.id = "tweets";
+                    document.body.appendChild(tweets_div);
+                }
+            }
+        }
+
+        function postTweet() {
+            event.preventDefault();
+            var tweet = document.getElementById("tweet").value;
+            var json_send = {"tweet":tweet, "username":username, "password":password};
+            var json_convert = JSON.stringify(json_send);
+            // Send a POST request to /api/tweet with tweet data
+            var req3 = new XMLHttpRequest();
+            req3.open("POST", "/api/tweet");
+            req3.send(json_convert);
+
+            req3.onreadystatechange = function() {
+                if (req3.readyState == 4 && req3.status == 200) {
+                    var tweet_div = document.createElement("div");
+                    tweet_div.className = "tweet";
+                    tweet_div.innerHTML = "<p>" + tweet + "</p><button type='button' onclick='deleteTweet(this.parentNode)' style='font-size: 15px; display:inline-block;'>Delete</button>";
+                    document.getElementById("tweets").appendChild(tweet_div);
+                }
+            }
+        }
+
+        function deleteTweet(tweet_div) {
+            event.preventDefault();
+            
+            var tweetIdToDelete = tweet_div.id;
+            var deleteRequest = new XMLHttpRequest();
+            deleteRequest.open("DELETE", "/api/tweet/" + tweetIdToDelete);
+            console.log(tweetIdToDelete);
+
+            deleteRequest.onreadystatechange = function() {
+                if (deleteRequest.readyState == 4 && deleteRequest.status == 200) {
+                tweet_div.parentNode.removeChild(tweet_div);
+                }
+            };
+            deleteRequest.send();
+        }
+
+        function logout() {
+            event.preventDefault();
+            document.getElementById("tweets").innerHTML = "";
+        }
+    </script>
+
+</head>
+
+<body>
+    <h1> 3010-eeter system: </h1>
+    <form id="login">
+        <h6>
+            <label for="username" style="font-size: 20px;">Name:</label>
+            <input type="text" id="username" name="username" size="30"></input>
+        </h6>
+        <h6>
+            <label for="password" style="font-size: 20px;">Password:</label>
+            <input type="text" id="password" name="password" size="30"></input>
+        </h6>
+        <h6>
+            <button type="submit" onclick="login(event)" style="font-size: 20px;">Login</button>
+        </h6>
+    </form>
+</body>
